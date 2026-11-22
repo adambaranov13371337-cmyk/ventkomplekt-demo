@@ -5,15 +5,65 @@
     const open = nav.classList.toggle('open');
     menu.setAttribute('aria-expanded', String(open));
   });
-  const dialog = document.querySelector('dialog');
+  function closeMenu() {
+    nav.classList.remove('open');
+    menu.setAttribute('aria-expanded', 'false');
+  }
   document.addEventListener('click', event => {
-    const trigger = event.target.closest('[data-photo]');
-    if (!trigger || !dialog.showModal) return;
+    if (!event.target.closest('header') || event.target.closest('nav a')) closeMenu();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && nav.classList.contains('open')) {
+      closeMenu();
+      menu.focus();
+    }
+  });
+
+  const dialog = document.querySelector('dialog');
+  const dialogImage = dialog.querySelector('img');
+  const photoButtons = [...document.querySelectorAll('[data-photo]')];
+  const toolbar = document.createElement('div');
+  toolbar.className = 'light-toolbar';
+  const label = document.createElement('span');
+  label.setAttribute('aria-live', 'polite');
+  toolbar.append(label);
+  function navigationButton(text, glyph) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.setAttribute('aria-label', text);
+    button.textContent = glyph;
+    toolbar.append(button);
+    return button;
+  }
+  const previous = navigationButton('Предыдущая фотография', '←');
+  const next = navigationButton('Следующая фотография', '→');
+  dialog.append(toolbar);
+  let current = 0;
+  let collection = [];
+  function showPhoto(index) {
+    current = Math.max(0, Math.min(collection.length - 1, index));
+    const trigger = collection[current];
+    dialogImage.src = trigger.dataset.photo;
+    dialogImage.alt = trigger.querySelector('img')?.alt || trigger.getAttribute('aria-label') || 'Фотография объекта';
+    label.textContent = dialogImage.alt;
+    previous.hidden = next.hidden = collection.length < 2;
+    previous.disabled = current === 0;
+    next.disabled = current === collection.length - 1;
+  }
+  photoButtons.forEach(trigger => trigger.addEventListener('click', event => {
+    if (!dialog.showModal) return;
     event.preventDefault();
-    const image = dialog.querySelector('img');
-    image.src = trigger.dataset.photo;
-    image.alt = trigger.querySelector('img')?.alt || '';
+    const group = trigger.closest('[data-photo-group], .rail, .photowall, .object-wall, main');
+    collection = group ? [...group.querySelectorAll('[data-photo]')] : [trigger];
+    showPhoto(collection.indexOf(trigger));
     dialog.showModal();
+  }));
+  previous.addEventListener('click', () => showPhoto(current - 1));
+  next.addEventListener('click', () => showPhoto(current + 1));
+  dialog.addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    event.preventDefault();
+    showPhoto(current + (event.key === 'ArrowRight' ? 1 : -1));
   });
   dialog.addEventListener('click', event => {
     if (event.target === dialog || event.target.closest('.close')) dialog.close();
@@ -84,26 +134,12 @@
   }, {passive:false});
   ['touchstart','pointerdown','keydown'].forEach(type => window.addEventListener(type, stop, {passive:true}));
   reduced.addEventListener('change', stop);
-  const hero = document.querySelector('.hero-image');
-  if (hero) {
-    let pending = false;
-    window.addEventListener('scroll', () => {
-      if (pending || reduced.matches) return;
-      pending = true;
-      requestAnimationFrame(() => {
-        hero.style.setProperty('--shift', Math.min(11, scrollY * .035) + 'px');
-        pending = false;
-      });
-    }, {passive:true});
-  }
-  if ('IntersectionObserver' in window && !reduced.matches) {
-    document.documentElement.classList.add('motion');
-    const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) if (entry.isIntersecting) {
-        entry.target.classList.remove('wait');
-        observer.unobserve(entry.target);
-      }
-    }, {threshold:.16});
-    document.querySelectorAll('.fact').forEach(el => {el.classList.add('wait');observer.observe(el)});
-  }
+  document.querySelectorAll('.rail').forEach(rail => rail.addEventListener('keydown', event => {
+    if (event.target !== rail || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const width = rail.firstElementChild?.getBoundingClientRect().width || rail.clientWidth;
+    const left = event.key === 'Home' ? 0 : event.key === 'End' ? rail.scrollWidth :
+      rail.scrollLeft + (event.key === 'ArrowRight' ? width : -width);
+    rail.scrollTo({left, behavior: reduced.matches ? 'instant' : 'smooth'});
+  }));
 })();

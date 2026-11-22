@@ -13,3 +13,17 @@ header{background:var(--paper);border-bottom:1px solid var(--ink);position:relat
 @media(min-width:761px){.hero h1{font-size:clamp(44px,6.1vw,110px)}}
 .hero-copy{min-width:0}
 @media(max-width:370px){.hero h1{font-size:44px}.rail-hint{display:none}.sectionhead{align-items:flex-start;flex-wrap:wrap}.intro h1{font-size:42px}}
+/* Shared full-size photograph viewer. */
+dialog[open]{background:#172b26;box-shadow:0 18px 75px #07100b66;max-width:min(94vw,1320px);padding:0;color:#f5f4ed;overflow:visible}
+dialog[open] img{width:100%;height:auto;max-height:72dvh;min-width:min(56vw,500px);object-fit:contain;background:#101b17}
+dialog::backdrop{background:#0b1711dd}
+dialog .close{top:9px;right:9px;z-index:1;width:40px;height:40px;line-height:1;background:#172b26f0;border:1px solid #fff9;font-size:27px}
+.light-toolbar{display:flex;align-items:center;gap:6px;padding:8px 11px;background:#172b26}
+.light-toolbar span{flex:1;padding-right:10px;font-size:14px;line-height:1.28}
+.light-toolbar button{width:38px;height:36px;border:1px solid #79897e;background:transparent;color:#fff;font-size:19px}
+.light-toolbar button:disabled{opacity:.36;cursor:default}
+body:has(dialog[open]){overflow:hidden}
+@media(min-width:761px){header .topbar{min-height:67px}}
+@media(max-width:760px){header .header-phone{display:inline-flex;font-size:12px;gap:0;order:1}header .header-phone i{display:none}header .menu{order:2;margin-left:0}header .brand{margin-right:auto}.topbar{gap:9px}dialog[open] img{min-width:min(82vw,500px)}}
+@media(max-width:360px){header .brand{font-size:16px;gap:6px}header .brandmark{width:22px;height:21px;gap:2px}header .header-phone{font-size:10px}header .menu{font-size:12px;padding:5px 7px}}
+@media(prefers-reduced-motion:no-preference){dialog[open]{animation:open-photo .22s cubic-bezier(.23,1,.32,1)}@keyframes open-photo{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}}
