@@ -7,6 +7,7 @@
 .field-hero { position: relative; isolation: isolate; overflow: hidden; color: white; background: #192825; }
 .field-exposure, .field-exposure img, .field-exposure::after { position: absolute; inset: 0; width: 100%; height: 100%; }
 .field-exposure { z-index: -1; }
+.field-shots { position: absolute; inset: 0; }
 .field-exposure img { object-fit: cover; object-position: 50% 49%; opacity: 0; transform: scale(1.035); transition: opacity .55s ease, transform .8s var(--ease-out); }
 .field-exposure img.on { opacity: 1; transform: scale(1); }
 .field-exposure::after { content: ""; background: linear-gradient(90deg, #0d1e19e8 0%, #10211bd1 20%, #12241d8a 46%, #13221a11 74%), linear-gradient(0deg,#101d19b0,transparent 32%); }
@@ -135,7 +136,7 @@
   .dispatch h2 {max-width:16ch}
 }
 @media(max-height:500px) { .study-stick { position:static; } .step { min-height:200px; } }
-@media(prefers-reduced-motion:reduce) { .field-exposure img,.spec-art img { transform:none!important; } }
+@media(prefers-reduced-motion:reduce) { .field-shots,.field-exposure img,.spec-art img { transform:none!important; } }
 .plate-details {display:grid;grid-template-columns:1.55fr 1fr;align-items:stretch}
 .plate-details>div {min-width:0;display:grid;grid-template-rows:1fr auto;align-items:center}
 .plate-details .plate-secondary {border-left:1px solid #bec7b7;background:#eff1e7}

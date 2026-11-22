@@ -1,4 +1,7 @@
 (() => {
+  const hero = document.querySelector('.field-hero');
+  const photoLayer = hero.querySelector('.field-shots');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const shotButtons = [...document.querySelectorAll('.shot-select')];
   const shots = [...document.querySelectorAll('.field-exposure img')];
   const caption = document.querySelector('.photo-caption');
@@ -15,8 +18,15 @@
   const board = document.querySelector('.study');
   let active = -1;
   let frame = 0;
+  let photoShift = 0;
+  function refreshHero() {
+    const rect = hero.getBoundingClientRect();
+    const shift = reducedMotion.matches ? 0 : Math.max(0, Math.min(-rect.top, rect.height)) * .24;
+    if (shift === photoShift) return;
+    photoShift = shift;
+    photoLayer.style.transform = shift ? `translate3d(0, ${shift}px, 0)` : '';
+  }
   function refreshBoard() {
-    frame = 0;
     const rect = board.getBoundingClientRect();
     if (rect.bottom < 0 || rect.top > innerHeight) return;
     const threshold = innerHeight * (matchMedia('(max-width:680px)').matches ? .69 : .5);
@@ -34,11 +44,17 @@
       else labels[i].removeAttribute('aria-current');
     });
   }
-  function queueBoard() {
-    if (!frame) frame = requestAnimationFrame(refreshBoard);
+  function queueScenes() {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      refreshHero();
+      refreshBoard();
+    });
   }
-  window.addEventListener('scroll', queueBoard, {passive: true});
-  window.addEventListener('resize', queueBoard);
-  window.addEventListener('pageshow', queueBoard);
-  queueBoard();
+  window.addEventListener('scroll', queueScenes, {passive: true});
+  window.addEventListener('resize', queueScenes);
+  window.addEventListener('pageshow', queueScenes);
+  reducedMotion.addEventListener('change', queueScenes);
+  queueScenes();
 })();
