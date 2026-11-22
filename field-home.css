@@ -45,8 +45,8 @@
 .field-head .underlink { white-space:nowrap; }
 .spec-rail,.object-rail { gap:clamp(13px,1.6vw,30px); padding:0 0 16px; }
 .spec-card { flex:0 0 clamp(230px,26vw,450px); min-width:0; }
-.spec-art { position:relative;display:grid;place-items:center;overflow:hidden;height:clamp(200px,19.5vw,325px);background:#e8ebe1;border:1px solid #c4cbbd; }
-.spec-art img { height:76%;width:73%;object-fit:contain;mix-blend-mode:multiply;transition:transform .35s var(--ease-out); }
+.spec-art { position:relative;display:grid;grid-template: minmax(0,1fr) / minmax(0,1fr);place-items:center;overflow:hidden;height:clamp(200px,19.5vw,325px);background:#e8ebe1;border:1px solid #c4cbbd; }
+.spec-art img { height:93%;width:92%;object-fit:contain;mix-blend-mode:multiply;transition:transform .35s var(--ease-out); }
 .card-arrow { position:absolute;bottom:10px;right:11px;width:33px;height:33px;display:grid;place-items:center;border:1px solid #a8b2a1;background:var(--paper);font-size:19px;transition:background .18s; }
 .spec-detail { border-bottom:1px solid #9fa99a;padding:14px 0; }
 .spec-detail h3 { font:500 clamp(25px,2.1vw,37px)/1.13 var(--head);letter-spacing:-.03em; }
